@@ -1,0 +1,349 @@
+/* すみっコぐらしテーマの数独アプリ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', 'Meiryo', sans-serif;
+    background: linear-gradient(135deg, #FFE5E5, #E5F5FF);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ヘッダー */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #FF6B9D;
+    font-size: 2em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.character-display {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.character {
+    font-size: 2em;
+    animation: bounce 2s infinite;
+}
+
+.character:nth-child(1) { animation-delay: 0s; }
+.character:nth-child(2) { animation-delay: 0.2s; }
+.character:nth-child(3) { animation-delay: 0.4s; }
+.character:nth-child(4) { animation-delay: 0.6s; }
+.character:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* ゲームコントロール */
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #FF6B9D, #FF8E53);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: transform 0.2s;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #87CEEB, #98FB98);
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: transform 0.2s;
+    font-weight: bold;
+}
+
+.btn-secondary:hover {
+    transform: scale(1.05);
+}
+
+.difficulty select {
+    padding: 8px 15px;
+    border-radius: 15px;
+    border: 2px solid #FFB6C1;
+    background: white;
+    font-size: 1em;
+}
+
+/* 数独グリッド */
+.sudoku-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 2px;
+    background: #333;
+    border: 3px solid #333;
+    border-radius: 10px;
+    padding: 2px;
+    max-width: 450px;
+    aspect-ratio: 1;
+}
+
+.cell {
+    background: white;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 40px;
+}
+
+.cell:hover {
+    background: #FFE5E5;
+    transform: scale(1.05);
+}
+
+.cell.selected {
+    background: #FFB6C1;
+    box-shadow: inset 0 0 10px rgba(255, 107, 157, 0.5);
+}
+
+.cell.given {
+    background: #F0F8FF;
+    font-weight: bold;
+    cursor: default;
+}
+
+.cell.given:hover {
+    background: #F0F8FF;
+    transform: none;
+}
+
+.cell.error {
+    background: #FFB6C1;
+    animation: shake 0.5s;
+}
+
+.cell.highlight {
+    background: #E5F5FF;
+}
+
+/* 3x3ボックスの境界線 */
+.cell:nth-child(3n) {
+    border-right: 3px solid #333;
+}
+
+.cell:nth-child(n+19):nth-child(-n+27),
+.cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 3px solid #333;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* 数字パッド */
+.number-pad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.number-btn {
+    background: linear-gradient(135deg, #FFFACD, #FFE4E1);
+    border: 2px solid #FFB6C1;
+    border-radius: 15px;
+    padding: 15px 10px;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 60px;
+}
+
+.number-btn:hover {
+    background: linear-gradient(135deg, #FFE4E1, #FFFACD);
+    transform: scale(1.05);
+}
+
+.number-btn.selected {
+    background: linear-gradient(135deg, #FF6B9D, #FF8E53);
+    color: white;
+    transform: scale(1.1);
+}
+
+.erase-btn {
+    background: linear-gradient(135deg, #FFA07A, #FFB6C1);
+    border: 2px solid #FF6B9D;
+    border-radius: 15px;
+    padding: 15px 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+    color: #333;
+}
+
+.erase-btn:hover {
+    background: linear-gradient(135deg, #FFB6C1, #FFA07A);
+    transform: scale(1.05);
+}
+
+/* ゲームステータス */
+.game-status {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 182, 193, 0.3);
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}
+
+/* モーダル */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    margin: 20px;
+}
+
+.modal-content h2 {
+    color: #FF6B9D;
+    margin-bottom: 15px;
+}
+
+.celebration {
+    font-size: 3em;
+    margin: 20px 0;
+    animation: bounce 1s infinite;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    .character-display .character {
+        font-size: 1.5em;
+    }
+    
+    .game-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .sudoku-grid {
+        max-width: 350px;
+    }
+    
+    .cell {
+        font-size: 1.2em;
+        min-height: 35px;
+    }
+    
+    .number-pad {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .number-btn {
+        font-size: 1.2em;
+        padding: 12px 8px;
+        min-height: 50px;
+    }
+    
+    .game-status {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .sudoku-grid {
+        max-width: 300px;
+    }
+    
+    .cell {
+        font-size: 1em;
+        min-height: 30px;
+    }
+    
+    .number-btn {
+        font-size: 1em;
+        padding: 10px 6px;
+        min-height: 45px;
+    }
+}
